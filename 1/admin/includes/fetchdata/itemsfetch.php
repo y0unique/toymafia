@@ -64,8 +64,8 @@ $count_rows = mysqli_num_rows($query);
 $data = array();
 while ($row = mysqli_fetch_assoc($query)) {
     $sub_array = array();
-    $sub_array[] = '<a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-info btn-sm edititembtn"><i class="fas fa-edit"></i></a>  
-                    <a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-danger btn-sm deleteitembtn"><i class="fas fa-trash"></i></a>';
+    $sub_array[] = '<a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-info btn-sm edititembtn"><i class="mdi mdi-file-edit"></i></a>  
+                    <a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-danger btn-sm deleteitembtn"><i class="mdi mdi-trash-can-outline"></i></a>';
     $sub_array[] = $row['item_id']; // Keep for actions
     $sub_array[] = $row['item_name'];
     $sub_array[] = $row['item_description'];
