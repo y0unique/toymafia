@@ -58,9 +58,6 @@ $count_rows = mysqli_num_rows($query);
 $data = array();
 
 while ($row = mysqli_fetch_assoc($query)) {
-    $actions = '<button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editItemModal" onclick="editItem(' . $row['item_id'] . ')">Edit</button>';
-    $actions .= '<button type="button" class="btn btn-danger btn-sm" onclick="deleteItem(' . $row['item_id'] . ')">Delete</button>';
-
     $data[] = array(
         'item_id' => $row['item_id'],
         'item_name' => $row['item_name'],
@@ -69,8 +66,7 @@ while ($row = mysqli_fetch_assoc($query)) {
         'item_category' => $row['item_category'],
         'item_quality' => $row['item_quality'],
         'item_price' => $row['item_price'],
-        'item_quantity' => $row['item_quantity'],
-        'actions' => $actions  // Make sure 'actions' is part of the returned data
+        'item_quantity' => $row['item_quantity']
     );
 }
 
