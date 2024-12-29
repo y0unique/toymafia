@@ -2,11 +2,11 @@
 include "../../database/connection.php";
 
 $output = array();
-$sql = "SELECT * FROM tbl_items";
+$sql = "SELECT * FROM tbl_items WHERE item_status = 'active'";  // Added condition for active items
 
 // Get the total number of rows
-$totalQuery = mysqli_query(mysql: $con, query: $sql);
-$total_all_rows = mysqli_num_rows(result: $totalQuery);
+$totalQuery = mysqli_query($con, $sql);  // Removed incorrect parameter names
+$total_all_rows = mysqli_num_rows($totalQuery);
 
 // Data Table columns
 $columns = array(
@@ -23,14 +23,14 @@ $columns = array(
 // Search
 if (isset($_POST['search']['value']) && $_POST['search']['value'] != '') {
     $search_value = mysqli_real_escape_string($con, $_POST['search']['value']); // Sanitize input
-    $sql .= " WHERE item_id LIKE '%" . $search_value . "%'";
+    $sql .= " AND (item_id LIKE '%" . $search_value . "%'";
     $sql .= " OR item_name LIKE '%" . $search_value . "%'";
     $sql .= " OR item_description LIKE '%" . $search_value . "%'";
     $sql .= " OR item_location LIKE '%" . $search_value . "%'";
     $sql .= " OR item_category LIKE '%" . $search_value . "%'";
     $sql .= " OR item_quality LIKE '%" . $search_value . "%'";
     $sql .= " OR item_price LIKE '%" . $search_value . "%'";
-    $sql .= " OR item_quantity LIKE '%" . $search_value . "%'";
+    $sql .= " OR item_quantity LIKE '%" . $search_value . "%')";
 }
 
 // Order
@@ -48,19 +48,18 @@ if (isset($_POST['order'])) {
     $sql .= " ORDER BY item_id ASC";
 }
 
-
 // Limit
 if (isset($_POST['length']) && $_POST['length'] != -1) {
-    $start = intval(value: $_POST['start']);
-    $length = intval(value: $_POST['length']);
+    $start = intval($_POST['start']);
+    $length = intval($_POST['length']);
     $sql .= " LIMIT " . $start . ", " . $length;
 }
 
-$query = mysqli_query(mysql: $con, query: $sql);
-$count_rows = mysqli_num_rows(result: $query);
+$query = mysqli_query($con, $sql);  // Removed incorrect parameter names
+$count_rows = mysqli_num_rows($query);
 
 $data = array();
-while ($row = mysqli_fetch_assoc(result: $query)) {
+while ($row = mysqli_fetch_assoc($query)) {
     $sub_array = array();
     $sub_array[] = '<a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-info btn-sm edititembtn"><i class="mdi mdi-file-edit"></i></a>  
                     <a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-danger btn-sm deleteitembtn"><i class="mdi mdi-trash-can-outline"></i></a>';
@@ -76,10 +75,10 @@ while ($row = mysqli_fetch_assoc(result: $query)) {
 }
 
 $output = array(
-    'draw' => intval(value: $_POST['draw']),
+    'draw' => intval($_POST['draw']),
     'recordsTotal' => $total_all_rows,
-    'recordsFiltered' => $total_all_rows,
+    'recordsFiltered' => $total_all_rows,  // You might want to update this with filtered count
     'data' => $data,
 );
 
-echo json_encode(value: $output);
+echo json_encode($output);

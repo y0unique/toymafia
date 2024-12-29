@@ -267,7 +267,7 @@ initializeAddItemValidation();
                         </div> -->
                     </div>
                     <div class="modal-footer flex-nowrap p-0">
-                        <button type="submit" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"><strong>Submit</strong></button>
+                        <button type="submit" id="submit" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"><strong>Submit</strong></button>
                         <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
@@ -414,27 +414,8 @@ initializeEditItemValidation();
 
 </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!-- Delete Schools Modal class="modal fade d-block" -->
-<div class="modal fade" id="deleteitemsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="deleteitemsModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-gradient-danger">
@@ -469,6 +450,47 @@ initializeEditItemValidation();
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" data-dismiss="modal">Cancel</button>
                         <button type="submit" id="submit" class="btn btn-danger">Yes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="modal fade modal-sheet p-4 py-md-5" id="deleteitemsModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-header">
+                <h5 class="modal-title text-gray-100" id="staticBackdropLabel">Delete item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body p-4 text-center">
+                <form id="deleteitems" action="">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-12">
+                                <label for="item_name" class="form-label">Item ID</label>
+                                <input class="form-control" type="" name="_id" id="_id" value="">
+                            </div>
+                            <div class="mb-12">
+                                <label for="item_name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="_item_name_" name="_item_name_" required>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="item_image" class="form-label">Item Image</label>
+                                <input type="file" class="form-control" id="_item_image" name="_item_image" required>
+                                <div class="invalid-feedback">Please select an image file (png or jpg only).</div>
+                            </div>
+                        </div> -->
+                    </div>
+                    </div>
+                    <div class="modal-footer flex-nowrap p-0">
+                        <button type="submit" id="submit" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0 border-end"><strong>Delete</strong></button>
+                        <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 py-3 m-0 rounded-0" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
             </div>

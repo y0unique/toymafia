@@ -187,19 +187,79 @@
         })
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+    // Update item
+    $(document).on('submit', '#editItem', function(e) {
+        e.preventDefault();;
+        var id = $('#id').val();
+        var item_name = $('#_item_name').val();
+        var item_description = $('#_item_description').val();
+        var item_location = $('#_item_location').val();
+        var item_category = $('#_item_category').val();
+        var item_quality = $('#_item_quality').val();
+        var item_price = $('#_item_price').val();
+        var item_quantity = $('#_item_quantity').val();
+        if(item_name != '' && item_description != '' && item_location != ''&& item_category != '' && item_quality != '' && item_price != '' && item_quantity != ''){
+        $.ajax({
+            url: "admin/includes/codes/itemscode.php",
+            type: "post",
+            data: {
+                id: id,
+                item_name: item_name,
+                item_description: item_description,
+                item_location: item_location,
+                item_category: item_category,
+                item_quality: item_quality,
+                item_price: item_price,
+                item_quantity: item_quantity,
+                update: true
+            },
+            success: function(data) {
+                var json = JSON.parse(data);
+                var editItemStatus = json.editItemStatus;
+                if (editItemStatus == 'true') {
+                    $('#itemsTable').DataTable().destroy();
+                    mytable = $('#itemsTable').DataTable({
+                        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']],
+                            "fnCreatedRow": function(nRow, aData, iDataIndex) {
+                                $(nRow).attr('id', aData[1]); // Use item_id for row ID
+                            },
+                            'serverSide': true,
+                            'processing': true,
+                            'paging': true,
+                            'ordering': false,
+                            // 'order': [],
+                            'ajax': {
+                                'url': 'admin/includes/fetchdata/itemsfetch.php',
+                                'type': 'post',
+                            },
+                            "columnDefs": [
+                                // { 'targets': [0], 'orderable': false }, // Disable ordering for specific columns
+                                { 'targets': [1], 'visible': false },      // Hide the item_id column
+                            ],
+                            'columns': [
+                                { data: 0 }, // Action buttons
+                                { data: 1 }, // Hidden item_id
+                                { data: 2 }, // Name
+                                { data: 3 }, // Description
+                                { data: 4 }, // Location
+                                { data: 5 }, // Category
+                                { data: 6 }, // Quality
+                                { data: 7 }, // Price
+                                { data: 8 }  // Quantity
+                            ]
+                        });
+                    alertify.set('notifier','position', 'top-right');
+                    alertify.success(json.message);
+                    $('#editItemModal').modal('hide');
+                } else {
+                    alert('failed');
+                }
+            }
+        });
+        } else {
+            alert('Fill all the required fields');
+        }
+    });
 
     //view school for delete modal
     $('#itemsTable').on('click', '.deleteitembtn', function(event) {
@@ -216,8 +276,71 @@
         type: 'post',
         success: function(data) {
             var json = JSON.parse(data);
-            $('#_id_').val(id);
+            $('#_id').val(id);
+            $('#_item_name_').val(json.item_name);
         }
         })
     });
+
+    //delete School
+    $(document).on('submit', '#deleteitems', function(e) {
+        e.preventDefault();
+        var id = $('#_id').val();
+        if (id != '') {
+        $.ajax({
+            url:"admin/includes/codes/itemscode.php",
+            type: "post",
+            data: {
+                id:id,
+                delete: true
+            },
+            success: function(data) {
+                var json = JSON.parse(data);
+                var deleteItemStatus = json.deleteItemStatus;
+                if (deleteItemStatus == 'true') {
+                    $('#itemsTable').DataTable().destroy();
+                    mytable = $('#itemsTable').DataTable({
+                        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, 'All']],
+                            "fnCreatedRow": function(nRow, aData, iDataIndex) {
+                                $(nRow).attr('id', aData[1]); // Use item_id for row ID
+                            },
+                            'serverSide': true,
+                            'processing': true,
+                            'paging': true,
+                            'ordering': false,
+                            // 'order': [],
+                            'ajax': {
+                                'url': 'admin/includes/fetchdata/itemsfetch.php',
+                                'type': 'post',
+                            },
+                            "columnDefs": [
+                                // { 'targets': [0], 'orderable': false }, // Disable ordering for specific columns
+                                { 'targets': [1], 'visible': false },      // Hide the item_id column
+                            ],
+                            'columns': [
+                                { data: 0 }, // Action buttons
+                                { data: 1 }, // Hidden item_id
+                                { data: 2 }, // Name
+                                { data: 3 }, // Description
+                                { data: 4 }, // Location
+                                { data: 5 }, // Category
+                                { data: 6 }, // Quality
+                                { data: 7 }, // Price
+                                { data: 8 }  // Quantity
+                            ]
+                        }
+                    );
+                    alertify.set('notifier','position', 'top-right');
+                    alertify.success(json.message);
+                    $('#deleteitemsModal').modal('hide');
+                } else {
+                    alert('Error communicating with the database');
+                }
+            }
+        });
+        } else {
+            alert('Fill all the required fields');
+        }
+    });
+
 </script>

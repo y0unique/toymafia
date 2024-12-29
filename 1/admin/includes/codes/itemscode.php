@@ -45,66 +45,48 @@ if(isset($_POST['view']))
     echo json_encode(value: $row);
 };
 
-//Edit School
+//Edit Item
 if(isset($_POST['update'])){
     $id = $_POST['id'];
-    $webID = $_POST['webID'];
-    $webUsername = $_POST['webUsername'];
-    $school_id = $_POST['school_id'];
-    $school_district = $_POST['school_district'];
-    $school_name = $_POST['school_name'];
-    $school_principal = $_POST['school_principal'];
-    $school_address = $_POST['school_address'];
-    $school_contact = $_POST['school_contact'];
-    $school_email = $_POST['school_email'];
-    $school_link = mysqli_real_escape_string($con, $_POST['school_link']);
-    $school_type = $_POST['school_type'];
-    $school_shsAvailability = $_POST['school_shsAvailability'];
-    $school_spedAvailablity = $_POST['school_spedAvailablity'];
+    $item_id = $_POST['id'];
+    $itemName = $_POST['item_name'];
+    $itemDescription = $_POST['item_description'];
+    $itemPrice = $_POST['item_price'];
+    $itemCategory   = $_POST['item_category'];
+    $itemQuantity = $_POST['item_quantity'];
+    $itemQuality = $_POST['item_quality'];
+    $itemLocation = $_POST['item_location'];
 
-    $sql = "UPDATE schoolstbl SET school_id = '$school_id', 
-                                    school_district = '$school_district',
-                                    school_name = '$school_name', 
-                                    school_principal = '$school_principal',
-                                    school_address = '$school_address',
-                                    school_contact = '$school_contact', 
-                                    school_email = '$school_email',
-                                    school_link = '$school_link',
-                                    school_type = '$school_type',
-                                    school_shsAvailability = '$school_shsAvailability',
-                                    school_spedAvailablity = '$school_spedAvailablity' 
-                                WHERE schooltbl_id = '$id'";
-    $query = mysqli_query($con,$sql);
+    $sql = "UPDATE tbl_items SET item_id = '$item_id', 
+                    item_name = '$itemName',
+                    item_description = '$itemDescription',
+                    item_location = '$itemLocation',
+                    item_category = '$itemCategory',
+                    item_quality = '$itemQuality',
+                    item_price = '$itemPrice',
+                    item_quantity = '$itemQuantity' 
+                    WHERE item_id = '$id'";
+    $query = mysqli_query(mysql: $con,query: $sql);
 
     if($query){
-        $inserttime = "INSERT INTO timelogtbl (user_id, log_action, log_date, log_time) 
-        values ('$webID', 'Edited School, id: $id, name: $school_name',  NOW(), NOW())";
-        $query1= mysqli_query($con,$inserttime);
-        $query2 = mysqli_insert_id($con);
-        if ($query1){
-            $data = array(
-                'editSchoolStatus'=>'true',
-                'message' => 'Updated Successfully' 
-            );
-            echo json_encode($data);
-            return;
-        } else {
-            $data = array(
-            'editSchoolStatus'=>'false',
+        $data = array(
+            'editItemStatus'=>'true',
+            'message' => 'Updated Successfully' 
         );
-            echo json_encode($data);
-        }
+        echo json_encode($data);
+        return;
     }
     else
     {
         $data = array(
-            'editSchoolStatus'=>'false',
+            'editItemStatus'=>'false',
         );
         echo json_encode($data);
     }
 }
 
-// Delete View Schhols
+
+// Delete View Items
 if(isset($_POST['deleteview'])){
     $id = $_POST['id'];
     $sql = "SELECT * FROM tbl_items WHERE item_id = '$id' LIMIT 1";
@@ -116,36 +98,22 @@ if(isset($_POST['deleteview'])){
 //Deleting the Issuances with the update of status to inactive
 if(isset($_POST['delete'])) {
     $id = $_POST['id'];
-    $webID = $_POST['webID'];
-    $school_id = $_POST['school_id'];
-    $school_name = $_POST['school_name'];
 
-    $sql = "UPDATE schoolstbl SET 	school_status = 'inactive' WHERE schooltbl_id = '$id'";
+    $sql = "UPDATE tbl_items SET item_status = 'inactive' WHERE item_id = '$id'";
     $query = mysqli_query($con,$sql);
 
     if($query){
-        $inserttime = "INSERT INTO timelogtbl (user_id, log_action, log_date, log_time) 
-        values ('$webID', 'Deleted School, id: $school_id, name: $school_name',  NOW(), NOW())";
-        $query1= mysqli_query($con,$inserttime);
-        $query2 = mysqli_insert_id($con);
-        if ($query1){
-            $data = array(
-                'deleteSchoolStatus'=>'true',
-                'message' => 'Delete Successfully' 
-            );
-            echo json_encode($data);
-            return;
-        } else {
-            $data = array(
-            'deleteSchoolStatus'=>'false',
+        $data = array(
+            'deleteItemStatus'=>'true',
+            'message' => 'Delete Successfully' 
         );
-            echo json_encode($data);
-        }
+        echo json_encode($data);
+        return;
     }
     else
     {
         $data = array(
-            'deleteSchoolStatus'=>'false',
+            'deleteItemStatus'=>'false',
             'messageError' => 'Delete Error' 
         );
         echo json_encode($data);
