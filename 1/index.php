@@ -113,7 +113,7 @@
         });
     });
 
-    // Add item with validation
+    // Add item
     $(document).on('submit','#addItem',function(e){
             e.preventDefault();
             var item_name = $('#item_name').val();
@@ -147,7 +147,6 @@
                             mytable.draw();
                             $('#addItemModal').modal('hide');
                             $('#addItem')[0].reset();
-                            alertify.set('notifier','position', 'top-right');
                             alertify.success(json.message);
                         }else{
                             alert('failed');
@@ -162,7 +161,6 @@
     // View item
     $('#itemsTable').on('click', '.edititembtn', function(event) {
         var table = $('#itemsTable').DataTable();
-        var trid = $(this).closest('tr').attr('id');
         var id = $(this).data('id');
         $('#editItemModal').modal('show');
 
@@ -185,7 +183,6 @@
             $('#_item_quantity').val(json.item_quantity);
 
             $('#id').val(id);
-            $('#trid').val(trid);
         }
         })
     });
@@ -208,7 +205,6 @@
     $('#itemsTable').on('click', '.deleteitembtn', function(event) {
         var table = $('#itemsTable').DataTable();
         var id = $(this).data('id');
-        var trid = $(this).closest('tr').attr('id');
         $('#deleteitemsModal').modal('show');
 
         $.ajax({
@@ -221,7 +217,6 @@
         success: function(data) {
             var json = JSON.parse(data);
             $('#_id_').val(id);
-            $('#_trid_').val(trid);
         }
         })
     });

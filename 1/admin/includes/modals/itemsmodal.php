@@ -92,91 +92,94 @@
 </div>
 
 <script>
+        alertify.set('notifier', 'position', 'top-left');
+
+function initializeAddItemValidation() {
+    const form = document.getElementById('addItem');
+    const submitButton = form.querySelector('button[type="submit"]');
+    const priceInput = document.getElementById('item_price');
+    const quantityInput = document.getElementById('item_quantity');
     
-    // document.getElementById('addItem').addEventListener('submit', function (e) {
-    //     let isValid = true; // Flag to track overall form validity
-
-    //     // Check all required input fields
-    //     const requiredFields = document.querySelectorAll('#addItem input[required]');
-    //     requiredFields.forEach(function (field) {
-    //         if (!field.value.trim()) {
-    //             field.classList.add('is-invalid'); // Add invalid class
-    //             isValid = false;
-    //             alertify.error(`Please fill out the ${field.previousElementSibling.innerText} field.`);
-    //         } else {
-    //             field.classList.remove('is-invalid'); // Remove invalid class if valid
-    //         }
-    //     });
-
-    //     // Validate item_image separately for file type
-    //     const imageInput = document.getElementById('item_image');
-    //     const file = imageInput.files[0];
-    //     if (file) {
-    //         const allowedExtensions = ['image/jpeg', 'image/png'];
-    //         if (!allowedExtensions.includes(file.type)) {
-    //             imageInput.classList.add('is-invalid'); // Add Bootstrap invalid class
-    //             alertify.error("Invalid file type. Only JPG or PNG files are allowed.");
-    //             isValid = false;
-    //         } else {
-    //             imageInput.classList.remove('is-invalid'); // Remove invalid class if valid
-    //         }
-    //     } else {
-    //         imageInput.classList.add('is-invalid'); // Mark as invalid if no file is selected
-    //         alertify.error("Please select an image file.");
-    //         isValid = false;
-    //     }
-
-    //     // Prevent form submission if any field is invalid
-    //     if (!isValid) {
-    //         e.preventDefault();
-    //     }
-    // });
+    // Removed imageInput event listener since image field is commented out
 
     // Price Validation
-    const priceInput = document.getElementById('item_price');
-    const priceError = document.getElementById('item_price_error');
-    
-    priceInput.addEventListener('blur', function () {
+    priceInput.addEventListener('blur', validatePrice);
+    priceInput.addEventListener('input', validatePrice);
+
+    // Quantity Validation
+    quantityInput.addEventListener('blur', validateQuantity);
+    quantityInput.addEventListener('input', validateQuantity);
+
+    // Re-check form validity dynamically
+    document.querySelectorAll('#addItem input[required]').forEach(function (input) {
+        input.addEventListener('input', checkFormValidity);
+    });
+
+    // Form submit event
+    form.addEventListener('submit', function (e) {
+        let errorCount = 0;
+
+        // Check all required input fields
+        const requiredFields = form.querySelectorAll('input[required]');
+        requiredFields.forEach(function (field) {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                alertify.error(`Please fill out the ${field.previousElementSibling.innerText} field.`);
+                errorCount++;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // Prevent submission if there are errors
+        if (errorCount > 0) {
+            e.preventDefault();
+            submitButton.disabled = true;
+        } else {
+            submitButton.disabled = false;
+        }
+    });
+
+    // Helper functions
+    function validatePrice() {
         const value = priceInput.value.trim();
-        const decimalRegex = /^\d+(\.\d{1,2})?$/; // Regex for decimal numbers
+        const decimalRegex = /^\d+(\.\d{1,2})?$/;
 
         if (!decimalRegex.test(value)) {
             priceInput.classList.add('is-invalid');
-            priceError.style.display = 'block';
-            priceInput.focus();
+            alertify.error("Invalid price. Enter a valid decimal number.");
+            submitButton.disabled = true;
         } else {
             priceInput.classList.remove('is-invalid');
-            priceError.style.display = 'none';
+            checkFormValidity();
         }
-    });
+    }
 
-    priceInput.addEventListener('input', function () {
-        priceError.style.display = 'none';
-        priceInput.classList.remove('is-invalid');
-    });
-
-    // Quantity Validation
-    const quantityInput = document.getElementById('item_quantity');
-    const quantityError = document.getElementById('item_quantity_error');
-
-    quantityInput.addEventListener('blur', function () {
+    function validateQuantity() {
         const value = quantityInput.value.trim();
-        const integerRegex = /^\d+$/; // Regex for positive integers
+        const integerRegex = /^\d+$/;
 
         if (!integerRegex.test(value) || parseInt(value) <= 0) {
             quantityInput.classList.add('is-invalid');
-            quantityError.style.display = 'block';
-            quantityInput.focus();
+            alertify.error("Invalid quantity. Enter a positive integer.");
+            submitButton.disabled = true;
         } else {
             quantityInput.classList.remove('is-invalid');
-            quantityError.style.display = 'none';
+            checkFormValidity();
         }
-    });
+    }
 
-    quantityInput.addEventListener('input', function () {
-        quantityError.style.display = 'none';
-        quantityInput.classList.remove('is-invalid');
-    });
+    function checkFormValidity() {
+        const allValid = Array.from(form.querySelectorAll('input[required]')).every(
+            (field) => field.value.trim() && !field.classList.contains('is-invalid')
+        );
+
+        submitButton.disabled = !allValid;
+    }
+}
+
+// Initialize validation
+initializeAddItemValidation();
 </script>
 
 
@@ -185,14 +188,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content rounded-3 shadow">
             <div class="modal-header">
-                <h5 class="modal-title text-gray-100" id="staticBackdropLabel">Add item</h5>
+                <h5 class="modal-title text-gray-100" id="staticBackdropLabel">Edit item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body p-4 text-center">
                 <form id="editItem" action="">
-                    <input class="form-control" type="" name="id" id="id" value="">
-                    <input class="form-control" type="" name="trid" id="trid" value="">
+                    <input class="form-control" type="hidden" name="id" id="id" value="">
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-3">
@@ -259,7 +261,7 @@
                         <!-- <div class="col-md-6">
                             <div class="mb-3">
                                 <label for="item_image" class="form-label">Item Image</label>
-                                <input type="file" class="form-control" id="item_image" name="item_image" required>
+                                <input type="file" class="form-control" id="_item_image" name="_item_image" required>
                                 <div class="invalid-feedback">Please select an image file (png or jpg only).</div>
                             </div>
                         </div> -->
@@ -274,13 +276,143 @@
     </div>
 </div>
 
+<script>
+    alertify.set('notifier', 'position', 'top-left');
 
+// Input validation functions
+function validateNumericInput(input, maxLength) {
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, maxLength);
+}
 
+function validateDecimalInput(input, maxLength) {
+    input.value = input.value.replace(/[^0-9.]/g, '').slice(0, maxLength);
+    const parts = input.value.split('.');
+    if (parts.length > 2) {
+        input.value = parts[0] + '.' + parts.slice(1).join('');
+    }
+}
 
+function validatePrice(input) {
+    const value = input.value.trim();
+    const decimalRegex = /^\d+(\.\d{1,2})?$/;
 
+    if (!decimalRegex.test(value)) {
+        input.classList.add('is-invalid');
+        alertify.error("Invalid price. Enter a valid decimal number.");
+        return false;
+    }
+    input.classList.remove('is-invalid');
+    return true;
+}
 
+function validateQuantity(input) {
+    const value = input.value.trim();
+    const integerRegex = /^\d+$/;
 
+    if (!integerRegex.test(value) || parseInt(value) <= 0) {
+        input.classList.add('is-invalid');
+        alertify.error("Invalid quantity. Enter a positive integer.");
+        return false;
+    }
+    input.classList.remove('is-invalid');
+    return true;
+}
 
+function validateFile(input, allowedExtensions, maxFileSize) {
+    const file = input.files[0];
+
+    if (!file) {
+        input.classList.add('is-invalid');
+        alertify.error("Please select an image file.");
+        return false;
+    }
+    if (!allowedExtensions.includes(file.type)) {
+        input.classList.add('is-invalid');
+        alertify.error("Invalid file type. Only JPG or PNG files are allowed.");
+        return false;
+    }
+    if (file.size > maxFileSize) {
+        input.classList.add('is-invalid');
+        alertify.error("File is too large. Maximum allowed size is 2 MB.");
+        return false;
+    }
+    input.classList.remove('is-invalid');
+    alertify.success("File is valid.");
+    return true;
+}
+
+function checkFormValidity(form) {
+    const inputs = form.querySelectorAll('input[required], select[required]');
+    return Array.from(inputs).every((input) => input.value.trim() && !input.classList.contains('is-invalid'));
+}
+
+function initializeEditItemValidation() {
+    const form = document.getElementById('editItem');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    // Element references
+    const priceInput = document.getElementById('_item_price');
+    const quantityInput = document.getElementById('_item_quantity');
+    const imageInput = document.getElementById('_item_image');
+
+    // Input event listeners
+    priceInput.addEventListener('input', () => validateDecimalInput(priceInput, 13));
+    quantityInput.addEventListener('input', () => validateNumericInput(quantityInput, 6));
+
+    priceInput.addEventListener('blur', () => validatePrice(priceInput));
+    quantityInput.addEventListener('blur', () => validateQuantity(quantityInput));
+
+    if (imageInput) {
+        imageInput.addEventListener('change', () => validateFile(imageInput, ['image/jpeg', 'image/png'], 2 * 1024 * 1024));
+    }
+
+    // Form submission event
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        let isValid = true;
+
+        // Validate required fields
+        form.querySelectorAll('input[required]').forEach((field) => {
+            if (!field.value.trim()) {
+                field.classList.add('is-invalid');
+                alertify.error(`Please fill out the ${field.previousElementSibling.innerText} field.`);
+                isValid = false;
+            } else {
+                field.classList.remove('is-invalid');
+            }
+        });
+
+        // Validate price and quantity
+        if (!validatePrice(priceInput) || !validateQuantity(quantityInput)) {
+            isValid = false;
+        }
+
+        // Validate file input
+        if (imageInput && !validateFile(imageInput, ['image/jpeg', 'image/png'], 2 * 1024 * 1024)) {
+            isValid = false;
+        }
+
+        if (isValid) {
+            submitButton.disabled = false;
+            form.submit(); // Submit the form if all validations pass
+        } else {
+            submitButton.disabled = true;
+        }
+    });
+
+    // Dynamic form validation check
+    form.querySelectorAll('input[required], select[required]').forEach((input) => {
+        input.addEventListener('input', () => {
+            submitButton.disabled = !checkFormValidity(form);
+        });
+    });
+}
+
+// Initialize validation on page load
+initializeEditItemValidation();
+
+</script>
 
 
 

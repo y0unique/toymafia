@@ -5,8 +5,8 @@ $output = array();
 $sql = "SELECT * FROM tbl_items";
 
 // Get the total number of rows
-$totalQuery = mysqli_query($con, $sql);
-$total_all_rows = mysqli_num_rows($totalQuery);
+$totalQuery = mysqli_query(mysql: $con, query: $sql);
+$total_all_rows = mysqli_num_rows(result: $totalQuery);
 
 // Data Table columns
 $columns = array(
@@ -35,38 +35,36 @@ if (isset($_POST['search']['value']) && $_POST['search']['value'] != '') {
 
 // Order
 if (isset($_POST['order'])) {
-    $column_index = intval($_POST['order'][0]['column']); // Ensure column index is an integer
-    $order_dir = $_POST['order'][0]['dir'] === 'asc' ? 'ASC' : 'DESC'; // Validate order direction
+    $column_index = intval($_POST['order'][0]['column']);
+    $order_dir = $_POST['order'][0]['dir'] === 'asc' ? 'ASC' : 'DESC';
 
-    // Check if the column index exists in the $columns array
     if (isset($columns[$column_index])) {
-        $column_name = $columns[$column_index]; // Fetch column name from the array
+        $column_name = $columns[$column_index];
         $sql .= " ORDER BY $column_name $order_dir";
     } else {
-        $sql .= " ORDER BY item_id ASC"; // Default ordering
+        $sql .= " ORDER BY item_id ASC";
     }
 } else {
-    $sql .= " ORDER BY item_id ASC"; // Default ordering
+    $sql .= " ORDER BY item_id ASC";
 }
 
 
 // Limit
 if (isset($_POST['length']) && $_POST['length'] != -1) {
-    $start = intval($_POST['start']);
-    $length = intval($_POST['length']);
+    $start = intval(value: $_POST['start']);
+    $length = intval(value: $_POST['length']);
     $sql .= " LIMIT " . $start . ", " . $length;
 }
 
-// Fetch data
-$query = mysqli_query($con, $sql);
-$count_rows = mysqli_num_rows($query);
+$query = mysqli_query(mysql: $con, query: $sql);
+$count_rows = mysqli_num_rows(result: $query);
 
 $data = array();
-while ($row = mysqli_fetch_assoc($query)) {
+while ($row = mysqli_fetch_assoc(result: $query)) {
     $sub_array = array();
     $sub_array[] = '<a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-info btn-sm edititembtn"><i class="mdi mdi-file-edit"></i></a>  
                     <a href="javascript:void();" data-id="' . $row['item_id'] . '" class="btn btn-danger btn-sm deleteitembtn"><i class="mdi mdi-trash-can-outline"></i></a>';
-    $sub_array[] = $row['item_id']; // Keep for actions
+    $sub_array[] = $row['item_id'];
     $sub_array[] = $row['item_name'];
     $sub_array[] = $row['item_description'];
     $sub_array[] = $row['item_location'];
@@ -77,12 +75,11 @@ while ($row = mysqli_fetch_assoc($query)) {
     $data[] = $sub_array;
 }
 
-// Output
 $output = array(
-    'draw' => intval($_POST['draw']),
+    'draw' => intval(value: $_POST['draw']),
     'recordsTotal' => $total_all_rows,
     'recordsFiltered' => $total_all_rows,
     'data' => $data,
 );
 
-echo json_encode($output);
+echo json_encode(value: $output);
